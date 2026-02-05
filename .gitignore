@@ -1,0 +1,19 @@
+# Sensitive Configuration
+secrets.json
+cookies.json
+cookies_netscape.txt
+.env
+
+# Output Data
+downloads/
+map.json
+
+# Cache and System
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+.vscode/
+.idea/
+venv/
+env/

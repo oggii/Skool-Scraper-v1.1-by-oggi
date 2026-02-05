@@ -1,0 +1,9 @@
+playwright
+yt-dlp
+beautifulsoup4
+requests
+python-dotenv
+fastapi
+uvicorn
+python-multipart
+aiofiles

@@ -1,0 +1,15 @@
+[
+    {
+        "domain": ".skool.com",
+        "expirationDate": 1754067342.123456,
+        "hostOnly": false,
+        "httpOnly": true,
+        "name": "login_token",
+        "path": "/",
+        "sameSite": "Lax",
+        "secure": true,
+        "session": false,
+        "storeId": null,
+        "value": "YOUR_COOKIE_VALUE_HERE"
+    }
+]

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skool Scraper v1.1 by oggi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .input-with-button {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-with-button input {
+            flex: 1;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .settings-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .status-msg {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-msg.success {
+            color: var(--success);
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .output-log {
+            background: #000;
+            color: #0f0;
+            border: 1px solid var(--border-color);
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .refreshing .btn-icon {
+            display: inline-block;
+            animation: rotate 1s linear infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">Skool Scraper v1.1 <small
+                        style="display:block; font-size: 0.6em; opacity: 0.7;">by oggi</small></span>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Dashboard</span>
+            </li>
+            <li class="nav-item" data-page="courses">
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">Course Map</span>
+            </li>
+            <li class="nav-item" data-page="download">
+                <span class="nav-icon">⬇️</span>
+                <span class="nav-label">Download</span>
+            </li>
+            <li class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div style="margin-bottom: 10px;">
+                <a href="https://www.paypal.com/paypalme/oggi1337" target="_blank" class="btn btn-secondary"
+                    style="width: 100%; justify-content: center; background: #FFC439; color: #000; border: none;">
+                    <span>☕ Buy me a Coffee</span>
+                </a>
+            </div>
+            <div class="status-indicator online">
+                <span class="status-dot"></span>
+                <span class="status-text" id="global-status">Checking...</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <section id="page-dashboard" class="page active">
+            <header class="page-header">
+                <h1>Dashboard</h1>
+                <button class="btn btn-primary" id="btn-refresh">
+                    <span class="btn-icon">🔄</span>
+                    <span>Refresh</span>
+                </button>
+            </header>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon courses">📚</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-courses">0</span>
+                        <span class="stat-label">Courses</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon modules">📄</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-modules">0</span>
+                        <span class="stat-label">Modules</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon videos">🎥</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-videos">0</span>
+                        <span class="stat-label">Videos</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon attachments">📎</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-attachments">0</span>
+                        <span class="stat-label">Attachments</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="card-body">
+                    <div class="action-buttons">
+                        <button class="btn btn-lg btn-gradient" id="btn-scrape" disabled
+                            title="Set URL in Settings first">
+                            <span class="btn-icon">🚀</span>
+                            <span>Run Mapper</span>
+                        </button>
+                        <button class="btn btn-lg btn-secondary" id="btn-view-map">
+                            <span class="btn-icon">🗺️</span>
+                            <span>View Map</span>
+                        </button>
+                    </div>
+                    <p id="mapper-hint" class="input-hint" style="color: var(--warning); margin-top: 10px;"></p>
+                </div>
+            </div>
+
+            <div class="card" id="scrape-output-card" style="display: none;">
+                <div class="card-header">
+                    <h2>Live Output</h2>
+                </div>
+                <div class="card-body">
+                    <pre class="output-log" id="scrape-output"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Course Map Page -->
+        <section id="page-courses" class="page">
+            <header class="page-header">
+                <h1>Course Map</h1>
+                <div class="header-actions">
+                    <input type="text" class="search-input" id="course-search" placeholder="Search...">
+                </div>
+            </header>
+            <div class="course-tree-container">
+                <div id="course-tree" class="course-tree"></div>
+            </div>
+        </section>
+
+        <!-- Download Page -->
+        <section id="page-download" class="page">
+            <header class="page-header">
+                <h1>Download Content</h1>
+            </header>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Start Task</h2>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-lg btn-gradient" id="btn-start-download" disabled title="Map courses first">
+                        <span class="btn-icon">⬇️</span>
+                        <span>Start Downloading Everything</span>
+                    </button>
+                    <p id="download-hint" class="input-hint" style="margin-top: 10px;"></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Progress</h2>
+                </div>
+                <div class="card-body">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">Ready</span>
+                    </div>
+                    <pre class="output-log" id="download-output"
+                        style="margin-top: 20px; max-height: 400px; display: none;"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Page -->
+        <section id="page-settings" class="page">
+            <header class="page-header">
+                <h1>Settings</h1>
+            </header>
+            <div class="card">
+                <div class="card-header">
+                    <h2>Configuration</h2>
+                </div>
+                <div class="card-body settings-form">
+                    <div class="form-group">
+                        <label>Target Classroom URL</label>
+                        <input type="text" class="form-input" id="setting-url"
+                            placeholder="https://www.skool.com/community/classroom/...">
+                        <p class="input-hint">The specific course/classroom URL you want to scrape.</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Download Location</label>
+                        <div class="input-with-button">
+                            <input type="text" class="form-input" id="setting-output" readonly
+                                placeholder="Select a folder...">
+                            <button class="btn btn-secondary" id="btn-pick-folder">
+                                <span class="btn-icon">📁</span>
+                                <span>Browse</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button class="btn btn-primary" id="btn-save-settings">
+                            <span class="btn-icon">💾</span>
+                            <span>Save Configuration</span>
+                        </button>
+                        <span id="settings-status" class="status-msg"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
