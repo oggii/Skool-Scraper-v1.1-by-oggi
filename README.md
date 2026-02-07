@@ -1,4 +1,4 @@
-# 🎓 Skool Scraper v1.1 by oggi
+# 🎓 Skool Scraper v1.1
 
 A robust, "deep-dive" scraper for Skool.com communities. This tool is designed to map entire course structures, extract all metadata (including hidden assets, internal links, and external resources), and download all content (videos, PDFs, attachments) into a clean, offline-readable format.
 
